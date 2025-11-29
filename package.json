@@ -1,0 +1,26 @@
+
+{
+  "name": "youtube-auto-generator",
+  "version": "1.0.0",
+  "description": "Automatic YouTube content generator with AI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.6.2",
+    "fluent-ffmpeg": "^2.1.2",
+    "dotenv": "^16.3.1",
+    "googleapis": "^118.0.0",
+    "openai": "^4.20.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
+                

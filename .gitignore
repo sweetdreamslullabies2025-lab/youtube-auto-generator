@@ -1,0 +1,35 @@
+
+# ⚠️ НИКОГДА НЕ ЗАГРУЖАЙТЕ СЕКРЕТНЫЕ ФАЙЛЫ
+
+# Переменные окружения (с API ключами)
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Node зависимости
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# IDE и редакторы
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS файлы
+.DS_Store
+Thumbs.db
+
+# Временные файлы
+tmp/
+temp/
+videos/
+*.tmp
+
+# Логи
+logs/
+*.log
+                
