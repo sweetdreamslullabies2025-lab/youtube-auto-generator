@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Auto Generator - Admin Panel</title>
+    <style>
+        :root {
+            --primary: #1f212d;
+            --secondary: #2a2d3d;
+            --accent: #ff6b6b;
+            --success: #51cf66;
+            --warning: #ffd43b;
+            --text: #e0e0e0;
+            --text-secondary: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--primary);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--secondary);
+            padding: 20px;
+            border-radius: 8px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 12px;
+        }
+
+        .sidebar button {
+            width: 100%;
+            padding: 10px 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            text-align: left;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .sidebar button:hover,
+        .sidebar button.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Main content */
+        .main {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--secondary);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-box {
+            background: var(--primary);
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-box .number {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .stat-box .label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        /* Form controls */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--primary);
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #ff5252;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: #000;
+        }
+
+        .btn-success:hover {
+            background: #40c057;
+        }
+
+        /* Status badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(81, 207, 102, 0.2);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(255, 212, 59, 0.2);
+            color: var(--warning);
+        }
+
+        .badge-error {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--accent);
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background: var(--primary);
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid var(--accent);
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--accent);
+        }
+
+        tr:hover {
+            background: var(--primary);
+        }
+
+        /* Hidden sections */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3>📺 Управление</h3>
+            <ul>
+                <li><button class="menu-btn active" data-section="dashboard">📊 Дашборд</button></li>
+                <li><button class="menu-btn" data-section="videos">🎬 Видео</button></li>
+                <li><button class="menu-btn" data-section="schedule">⏰ Расписание</button></li>
+                <li><button class="menu-btn" data-section="channels">📡 Каналы</button></li>
+                <li><button class="menu-btn" data-section="settings">⚙️ Настройки</button></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Dashboard -->
+            <div class="section active" id="dashboard">
+                <div class="card">
+                    <h2>📊 Дашборд</h2>
+                    <div class="card-grid">
+                        <div class="stat-box">
+                            <div class="number">12</div>
+                            <div class="label">Видео создано</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="number">45.2K</div>
+                            <div class="label">Просмотры</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="number">1.2K</div>
+                            <div class="label">Подписчики</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="number">3</div>
+                            <div class="label">Активных каналов</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📅 Последние видео</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>Статус</th>
+                                <th>Дата</th>
+                                <th>Просмотры</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Историческое ASMR: Древний Рим</td>
+                                <td><span class="badge badge-success">✓ Опубликовано</span></td>
+                                <td>2025-11-29</td>
+                                <td>1.2K</td>
+                            </tr>
+                            <tr>
+                                <td>Рассказ у камина: Средневековье</td>
+                                <td><span class="badge badge-success">✓ Опубликовано</span></td>
+                                <td>2025-11-28</td>
+                                <td>956</td>
+                            </tr>
+                            <tr>
+                                <td>Сказки для сна: Древняя Греция</td>
+                                <td><span class="badge badge-warning">⏳ В процессе</span></td>
+                                <td>2025-11-29</td>
+                                <td>—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Videos -->
+            <div class="section" id="videos">
+                <div class="card">
+                    <h2>🎬 Мои видео</h2>
+                    <div style="margin-bottom: 20px;">
+                        <button class="btn-primary">+ Создать новое видео</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>Канал</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>История у камина: Древний Египет</td>
+                                <td>История у камина</td>
+                                <td><span class="badge badge-success">✓ Опубликовано</span></td>
+                                <td>
+                                    <button class="btn-secondary" style="padding: 4px 8px; font-size: 12px;">Редактировать</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Schedule -->
+            <div class="section" id="schedule">
+                <div class="card">
+                    <h2>⏰ Расписание публикаций</h2>
+                    <div class="form-group">
+                        <label>Частота публикаций:</label>
+                        <select>
+                            <option>Каждый день</option>
+                            <option>Через день</option>
+                            <option>2 раза в неделю</option>
+                            <option>Вручную</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Время публикации (GMT):</label>
+                        <input type="time" value="19:00">
+                    </div>
+                    <div class="form-group">
+                        <label>Длительность видео (мин):</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <label style="font-size: 12px;">От:</label>
+                                <input type="number" value="60" min="10" max="480">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px;">До:</label>
+                                <input type="number" value="120" min="10" max="480">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary">💾 Сохранить</button>
+                        <button class="btn-secondary">Отмена</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Channels -->
+            <div class="section" id="channels">
+                <div class="card">
+                    <h2>📡 Мои каналы</h2>
+                    <div style="margin-bottom: 20px;">
+                        <button class="btn-primary">+ Добавить канал</button>
+                    </div>
+                    <div class="card-grid">
+                        <div style="background: var(--primary); padding: 15px; border-radius: 6px; border-left: 3px solid var(--success);">
+                            <h4>История у камина</h4>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 5px;">Русский • ASMR • Sleep Stories</p>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 5px;">📊 1,234 подписчиков</p>
+                            <button class="btn-secondary" style="margin-top: 10px; width: 100%; padding: 6px;">Редактировать</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings -->
+            <div class="section" id="settings">
+                <div class="card">
+                    <h2>⚙️ Настройки API</h2>
+                    <div class="form-group">
+                        <label>OpenAI API Key:</label>
+                        <input type="password" placeholder="sk-...">
+                    </div>
+                    <div class="form-group">
+                        <label>GenAIPro Token:</label>
+                        <input type="password" placeholder="eyJ...">
+                    </div>
+                    <div class="form-group">
+                        <label>YouTube OAuth Token:</label>
+                        <input type="password" placeholder="ya29...">
+                    </div>
+                    <div class="form-group">
+                        <label>Telegram Bot Token:</label>
+                        <input type="password" placeholder="123456:ABC...">
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary">💾 Сохранить</button>
+                        <button class="btn-secondary">Отмена</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Переключение секций
+        document.querySelectorAll('.menu-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Удаляем класс active у всех кнопок
+                document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+
+                // Скрываем все секции
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+
+                // Показываем выбранную секцию
+                const sectionId = e.target.dataset.section;
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+
+        // Обработчики кнопок
+        document.querySelectorAll('.btn-primary, .btn-secondary').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (e.target.textContent.includes('Сохранить')) {
+                    alert('✅ Настройки сохранены!');
+                }
+            });
+        });
+
+        console.log('✅ Admin Panel загружена');
+    </script>
+</body>
+</html>
